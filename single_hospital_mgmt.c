@@ -1,0 +1,312 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_PATIENTS 50
+#define MAX_NAME 50
+#define MAX_DISEASE 50
+#define MAX_PHONE 15
+#define TOTAL_BEDS 50
+
+// Structure to store patient information
+struct Patient {
+    int patientID;
+    char name[MAX_NAME];
+    int age;
+    char disease[MAX_DISEASE];
+    char phone[MAX_PHONE];
+    char admissionDate[15];
+};
+
+// Global variables with 10 sample patients
+struct Patient patients[MAX_PATIENTS] = {
+    {1000, "Narayan Aryal", 18, "Diabetes", "9742886683", "12/05/2026"},
+    {1001, "Ankit Mandal", 20, "Asthma", "9812345678", "11/05/2026"},
+    {1002, "Amit Patel", 58, "Hypertension", "9898765432", "10/05/2026"},
+    {1003, "Subash Kumar Mandal", 18, "Flu ", "9823456789", "13/05/2026"},
+    {1004, "Rohan Kharal", 40, "Migraine", "9834567890", "09/05/2026"},
+    {1005, "Ankit Karki", 35, "Gastritis", "9845678901", "08/05/2026"},
+    {1006, "Vikram Bk", 52, "Back Pain", "9856789012", "14/05/2026"},
+    {1007, "Sneha Sapkota", 20, "Thyroid", "9867890123", "12/05/2026"},
+    {1008, "Arjun Panthi", 48, "Arthritis", "9878901234", "07/05/2026"},
+    {1009, "Subash Aryal", 30, "Anxiety", "9889012345", "13/05/2026"}
+};
+int patientCount = 10;
+int availableBeds = TOTAL_BEDS - 10;  // 40 beds available (50 total - 10 current patients)
+
+// Function to add a new patient
+void addPatient() {
+    if (patientCount >= MAX_PATIENTS) {
+        printf("\nHospital is at full capacity! Cannot add more patients.\n");
+        return;
+    }
+
+    if (availableBeds <= 0) {
+        printf("\nNo beds available! Cannot admit more patients.\n");
+        return;
+    }
+
+    struct Patient newPatient;
+    newPatient.patientID = 1000 + patientCount;
+
+    printf("\n========== Add New Patient ==========\n");
+    printf("Patient ID: %d\n", newPatient.patientID);
+
+    printf("Enter Patient Name: ");
+    scanf(" %49[^\n]", newPatient.name);
+
+    printf("Enter Age: ");
+    scanf("%d", &newPatient.age);
+
+    printf("Enter Disease/Condition: ");
+    scanf(" %49[^\n]", newPatient.disease);
+
+    printf("Enter Phone Number: ");
+    scanf("%14s", newPatient.phone);
+
+    printf("Enter Admission Date (DD/MM/YYYY): ");
+    scanf("%14s", newPatient.admissionDate);
+
+    patients[patientCount] = newPatient;
+    patientCount++;
+    availableBeds--;  // Reduce available beds
+
+    printf("\nPatient added successfully!\n");
+    printf("Available beds now: %d/%d\n", availableBeds, TOTAL_BEDS);
+}
+
+// Function to display all patients
+void displayPatients() {
+    if (patientCount == 0) {
+        printf("\nNo patients in the system.\n");
+        return;
+    }
+
+    printf("\n========== Patient List ==========\n");
+    printf("%-5s | %-20s | %-5s | %-20s | %-15s | %-12s\n",
+           "ID", "Name", "Age", "Disease", "Phone", "Admission Date");
+    printf("------------------------------------------------------------------------------------\n");
+
+    for (int i = 0; i < patientCount; i++) {
+        printf("%-5d | %-20s | %-5d | %-20s | %-15s | %-12s\n",
+               patients[i].patientID,
+               patients[i].name,
+               patients[i].age,
+               patients[i].disease,
+               patients[i].phone,
+               patients[i].admissionDate);
+    }
+    printf("------------------------------------------------------------------------------------\n");
+}
+
+// Function to search for a patient by name
+void searchPatient() {
+    if (patientCount == 0) {
+        printf("\nNo patients in the system.\n");
+        return;
+    }
+
+    char searchName[MAX_NAME];
+    printf("\n========== Search Patient ==========\n");
+    printf("Enter Patient Name to search: ");
+    scanf(" %49[^\n]", searchName);
+
+    int found = 0;
+    printf("\n------- Search Results -------\n");
+
+    for (int i = 0; i < patientCount; i++) {
+        if (strcasecmp(patients[i].name, searchName) == 0) {
+            printf("\nPatient Found!\n");
+            printf("Patient ID: %d\n", patients[i].patientID);
+            printf("Name: %s\n", patients[i].name);
+            printf("Age: %d\n", patients[i].age);
+            printf("Disease: %s\n", patients[i].disease);
+            printf("Phone: %s\n", patients[i].phone);
+            printf("Admission Date: %s\n", patients[i].admissionDate);
+            found = 1;
+        }
+    }
+
+    if (!found) {
+        printf("\nPatient '%s' not found in the system.\n", searchName);
+    }
+}
+
+// Function to search for a patient by ID
+void searchPatientByID() {
+    if (patientCount == 0) {
+        printf("\nNo patients in the system.\n");
+        return;
+    }
+
+    int searchID;
+    printf("\n========== Search Patient by ID ==========\n");
+    printf("Enter Patient ID to search: ");
+    scanf("%d", &searchID);
+
+    int found = 0;
+
+    for (int i = 0; i < patientCount; i++) {
+        if (patients[i].patientID == searchID) {
+            printf("\nPatient Found!\n");
+            printf("Patient ID: %d\n", patients[i].patientID);
+            printf("Name: %s\n", patients[i].name);
+            printf("Age: %d\n", patients[i].age);
+            printf("Disease: %s\n", patients[i].disease);
+            printf("Phone: %s\n", patients[i].phone);
+            printf("Admission Date: %s\n", patients[i].admissionDate);
+            found = 1;
+            break;
+        }
+    }
+
+    if (!found) {
+        printf("\nPatient with ID %d not found in the system.\n", searchID);
+    }
+}
+
+// Function to update patient information
+void updatePatient() {
+    if (patientCount == 0) {
+        printf("\nNo patients in the system.\n");
+        return;
+    }
+
+    int searchID;
+    printf("\n========== Update Patient ==========\n");
+    printf("Enter Patient ID to update: ");
+    scanf("%d", &searchID);
+
+    for (int i = 0; i < patientCount; i++) {
+        if (patients[i].patientID == searchID) {
+            printf("\nCurrent Details:\n");
+            printf("Name: %s\n", patients[i].name);
+            printf("Age: %d\n", patients[i].age);
+            printf("Disease: %s\n", patients[i].disease);
+            printf("Phone: %s\n", patients[i].phone);
+
+            printf("\nEnter New Name: ");
+            scanf(" %49[^\n]", patients[i].name);
+
+            printf("Enter New Age: ");
+            scanf("%d", &patients[i].age);
+
+            printf("Enter New Disease/Condition: ");
+            scanf(" %49[^\n]", patients[i].disease);
+
+            printf("Enter New Phone Number: ");
+            scanf("%14s", patients[i].phone);
+
+            printf("\nPatient updated successfully!\n");
+            return;
+        }
+    }
+
+    printf("\nPatient with ID %d not found.\n", searchID);
+}
+
+// Function to delete a patient
+void deletePatient() {
+    if (patientCount == 0) {
+        printf("\nNo patients in the system.\n");
+        return;
+    }
+
+    int searchID;
+    printf("\n========== Delete Patient ==========\n");
+    printf("Enter Patient ID to delete: ");
+    scanf("%d", &searchID);
+
+    for (int i = 0; i < patientCount; i++) {
+        if (patients[i].patientID == searchID) {
+            // Shift patients array
+            for (int j = i; j < patientCount - 1; j++) {
+                patients[j] = patients[j + 1];
+            }
+            patientCount--;
+            availableBeds++;  // Increase available beds
+            printf("\nPatient deleted successfully!\n");
+            printf("Available beds now: %d/%d\n", availableBeds, TOTAL_BEDS);
+            return;
+        }
+    }
+
+    printf("\nPatient with ID %d not found.\n", searchID);
+}
+
+// Function to display bed status
+void displayBedStatus() {
+    printf("\n========== Hospital Bed Status ==========\n");
+    printf("Total Beds: %d\n", TOTAL_BEDS);
+    printf("Occupied Beds: %d\n", patientCount);
+    printf("Available Beds: %d\n", availableBeds);
+    printf("Occupancy Rate: %.2f%%\n\n", ((float)patientCount / TOTAL_BEDS) * 100);
+}
+
+// Function to display menu
+void displayMenu() {
+    printf("\n========== HOSPITAL MANAGEMENT SYSTEM  ==========\n");
+    printf("1. Add Patient\n");
+    printf("2. Display All Patients\n");
+    printf("3. Search Patient by Name\n");
+    printf("4. Search Patient by ID\n");
+    printf("5. Update Patient Information\n");
+    printf("6. Delete Patient\n");
+    printf("7. Total Patients\n");
+    printf("8. Bed Status\n");
+    printf("9. Exit\n");
+    printf("\nEnter your choice (1-9): ");
+}
+
+// Main function
+int main() {
+    int choice;
+
+    while (1) {
+        displayMenu();
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                addPatient();
+                break;
+
+            case 2:
+                displayPatients();
+                break;
+
+            case 3:
+                searchPatient();
+                break;
+
+            case 4:
+                searchPatientByID();
+                break;
+
+            case 5:
+                updatePatient();
+                break;
+
+            case 6:
+                deletePatient();
+                break;
+
+            case 7:
+                printf("\nTotal Patients in Hospital: %d/%d\n", patientCount, MAX_PATIENTS);
+                break;
+
+            case 8:
+                displayBedStatus();
+                break;
+
+            case 9:
+                printf("\nThank you for using Hospital Management System.\n\n");
+                exit(0);
+
+            default:
+                printf("\nInvalid choice! Please enter a number between 1 and 9.\n");
+        }
+    }
+
+    return 0;
+}
