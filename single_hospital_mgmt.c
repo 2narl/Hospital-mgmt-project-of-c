@@ -61,8 +61,26 @@ void addPatient() {
     printf("Enter Disease/Condition: ");
     scanf(" %49[^\n]", newPatient.disease);
 
-    printf("Enter Phone Number: ");
-    scanf("%14s", newPatient.phone);
+    // Validate phone number - must be exactly 10 digits
+    int validPhone = 0;
+    while (!validPhone) {
+        printf("Enter Phone Number (10 digits): ");
+        scanf("%14s", newPatient.phone);
+        
+        if (strlen(newPatient.phone) != 10) {
+            printf("Error! Phone number must be exactly 10 digits. Please try again.\n");
+            continue;
+        }
+        
+        validPhone = 1;
+        for (int i = 0; i < 10; i++) {
+            if (newPatient.phone[i] < '0' || newPatient.phone[i] > '9') {
+                validPhone = 0;
+                printf("Error! Phone number must contain only digits. Please try again.\n");
+                break;
+            }
+        }
+    }
 
     printf("Enter Admission Date (DD/MM/YYYY): ");
     scanf("%14s", newPatient.admissionDate);
@@ -194,8 +212,26 @@ void updatePatient() {
             printf("Enter New Disease/Condition: ");
             scanf(" %49[^\n]", patients[i].disease);
 
-            printf("Enter New Phone Number: ");
-            scanf("%14s", patients[i].phone);
+            // Validate phone number - must be exactly 10 digits
+            int validPhone = 0;
+            while (!validPhone) {
+                printf("Enter New Phone Number (10 digits): ");
+                scanf("%14s", patients[i].phone);
+                
+                if (strlen(patients[i].phone) != 10) {
+                    printf("Error! Phone number must be exactly 10 digits. Please try again.\n");
+                    continue;
+                }
+                
+                validPhone = 1;
+                for (int j = 0; j < 10; j++) {
+                    if (patients[i].phone[j] < '0' || patients[i].phone[j] > '9') {
+                        validPhone = 0;
+                        printf("Error! Phone number must contain only digits. Please try again.\n");
+                        break;
+                    }
+                }
+            }
 
             printf("\nPatient updated successfully!\n");
             return;
