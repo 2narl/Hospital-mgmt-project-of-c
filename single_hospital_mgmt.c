@@ -34,6 +34,43 @@ struct Patient patients[MAX_PATIENTS] = {
 int patientCount = 10;
 int availableBeds = TOTAL_BEDS - 10;  // 40 beds available (50 total - 10 current patients)
 
+// Function to validate admission date in DD/MM/YYYY format
+int isValidDate(const char *date) {
+    if (strlen(date) != 10 || date[2] != '/' || date[5] != '/') {
+        return 0;
+    }
+
+    int day, month, year;
+    if (sscanf(date, "%2d/%2d/%4d", &day, &month, &year) != 3) {
+        return 0;
+    }
+
+    if (year < 1900 || month < 1 || month > 12 || day < 1) {
+        return 0;
+    }
+
+    int maxDay;
+    switch (month) {
+        case 1: case 3: case 5: case 7: case 8: case 10: case 12:
+            maxDay = 31;
+            break;
+        case 4: case 6: case 9: case 11:
+            maxDay = 30;
+            break;
+        case 2:
+            if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) {
+                maxDay = 29;
+            } else {
+                maxDay = 28;
+            }
+            break;
+        default:
+            return 0;
+    }
+
+    return day <= maxDay;
+}
+
 // Function to add a new patient
 void addPatient() {
     if (patientCount >= MAX_PATIENTS) {
@@ -82,8 +119,18 @@ void addPatient() {
         }
     }
 
-    printf("Enter Admission Date (DD/MM/YYYY): ");
-    scanf("%14s", newPatient.admissionDate);
+    int validDate = 0;
+    while (!validDate) {
+        printf("Enter Admission Date (DD/MM/YYYY): ");
+        scanf(" %14[^\n]", newPatient.admissionDate);
+
+        if (!isValidDate(newPatient.admissionDate)) {
+            printf("Error! Please enter a valid admission date in DD/MM/YYYY format.\n");
+            continue;
+        }
+
+        validDate = 1;
+    }
 
     patients[patientCount] = newPatient;
     patientCount++;
