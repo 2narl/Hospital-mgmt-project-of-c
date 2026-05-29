@@ -276,7 +276,7 @@ void displayBedStatus() {
     printf("Total Beds: %d\n", TOTAL_BEDS);
     printf("Occupied Beds: %d\n", patientCount);
     printf("Available Beds: %d\n", availableBeds);
-    printf("Occupancy Rate: %.2f%%\n\n", ((float)patientCount / TOTAL_BEDS) * 100);
+    
 }
 
 // Function to display menu
