@@ -7,6 +7,7 @@
 #define MAX_DISEASE 50
 #define MAX_PHONE 15
 #define TOTAL_BEDS 50
+#define PATIENT_FILE "patients.txt"
 
 // Structure to store patient information
 struct Patient {
@@ -18,21 +19,105 @@ struct Patient {
     char admissionDate[15];
 };
 
-// Global variables with 10 sample patients
-struct Patient patients[MAX_PATIENTS] = {
-    {1000, "Narayan Aryal", 18, "Diabetes", "9742886683", "12/05/2026"},
-    {1001, "Ankit Mandal", 20, "Asthma", "9812345678", "11/05/2026"},
-    {1002, "Amit Patel", 58, "Hypertension", "9898765432", "10/05/2026"},
-    {1003, "Subash Kumar Mandal", 18, "Flu ", "9823456789", "13/05/2026"},
-    {1004, "Rohan Kharal", 40, "Migraine", "9834567890", "09/05/2026"},
-    {1005, "Ankit Karki", 35, "Gastritis", "9845678901", "08/05/2026"},
-    {1006, "Vikram Bk", 52, "Back Pain", "9856789012", "14/05/2026"},
-    {1007, "Sneha Sapkota", 20, "Thyroid", "9867890123", "12/05/2026"},
-    {1008, "Arjun Panthi", 48, "Arthritis", "9878901234", "07/05/2026"},
-    {1009, "Subash Aryal", 30, "Anxiety", "9889012345", "13/05/2026"}
-};
-int patientCount = 10;
-int availableBeds = TOTAL_BEDS - 10;  // 40 beds available (50 total - 10 current patients)
+// Global patient list loaded from file
+struct Patient patients[MAX_PATIENTS];
+int patientCount = 0;
+int availableBeds = TOTAL_BEDS;
+int nextPatientID = 1000;
+
+// Function to save patients to file
+void savePatientsToFile() {
+    FILE *file = fopen(PATIENT_FILE, "w");
+    if (!file) {
+        printf("Error: Unable to save patient records to %s\n", PATIENT_FILE);
+        return;
+    }
+
+    for (int i = 0; i < patientCount; i++) {
+        fprintf(file, "%d|%s|%d|%s|%s|%s\n",
+                patients[i].patientID,
+                patients[i].name,
+                patients[i].age,
+                patients[i].disease,
+                patients[i].phone,
+                patients[i].admissionDate);
+    }
+
+    fclose(file);
+}
+
+// Function to load patients from file
+int loadPatientsFromFile() {
+    FILE *file = fopen(PATIENT_FILE, "r");
+    if (!file) {
+        return 0;
+    }
+
+    char line[256];
+    patientCount = 0;
+    nextPatientID = 1000;
+
+    while (fgets(line, sizeof(line), file) && patientCount < MAX_PATIENTS) {
+        struct Patient temp;
+        char *token;
+
+        token = strtok(line, "|\n");
+        if (!token) continue;
+        temp.patientID = atoi(token);
+
+        token = strtok(NULL, "|\n");
+        if (!token) continue;
+        strncpy(temp.name, token, MAX_NAME - 1);
+        temp.name[MAX_NAME - 1] = '\0';
+
+        token = strtok(NULL, "|\n");
+        if (!token) continue;
+        temp.age = atoi(token);
+
+        token = strtok(NULL, "|\n");
+        if (!token) continue;
+        strncpy(temp.disease, token, MAX_DISEASE - 1);
+        temp.disease[MAX_DISEASE - 1] = '\0';
+
+        token = strtok(NULL, "|\n");
+        if (!token) continue;
+        strncpy(temp.phone, token, MAX_PHONE - 1);
+        temp.phone[MAX_PHONE - 1] = '\0';
+
+        token = strtok(NULL, "|\n");
+        if (!token) continue;
+        strncpy(temp.admissionDate, token, sizeof(temp.admissionDate) - 1);
+        temp.admissionDate[sizeof(temp.admissionDate) - 1] = '\0';
+
+        patients[patientCount++] = temp;
+        if (temp.patientID >= nextPatientID) {
+            nextPatientID = temp.patientID + 1;
+        }
+    }
+
+    fclose(file);
+    availableBeds = TOTAL_BEDS - patientCount;
+    return 1;
+}
+
+// Returns the smallest unused patient ID starting from 1000
+int getNextPatientID() {
+    int candidate = 1000;
+
+    while (1) {
+        int used = 0;
+        for (int i = 0; i < patientCount; i++) {
+            if (patients[i].patientID == candidate) {
+                used = 1;
+                break;
+            }
+        }
+        if (!used) {
+            return candidate;
+        }
+        candidate++;
+    }
+}
 
 // Function to validate admission date in DD/MM/YYYY format
 int isValidDate(const char *date) {
@@ -84,7 +169,7 @@ void addPatient() {
     }
 
     struct Patient newPatient;
-    newPatient.patientID = 1000 + patientCount;
+    newPatient.patientID = getNextPatientID();
 
     printf("\n========== Add New Patient ==========\n");
     printf("Patient ID: %d\n", newPatient.patientID);
@@ -135,6 +220,7 @@ void addPatient() {
     patients[patientCount] = newPatient;
     patientCount++;
     availableBeds--;  // Reduce available beds
+    savePatientsToFile();
 
     printf("\nPatient added successfully!\n");
     printf("Available beds now: %d/%d\n", availableBeds, TOTAL_BEDS);
@@ -280,6 +366,19 @@ void updatePatient() {
                 }
             }
 
+            int validDate = 0;
+            while (!validDate) {
+                printf("Enter New Admission Date (DD/MM/YYYY): ");
+                scanf(" %14[^\n]", patients[i].admissionDate);
+
+                if (!isValidDate(patients[i].admissionDate)) {
+                    printf("Error! Please enter a valid admission date in DD/MM/YYYY format.\n");
+                    continue;
+                }
+                validDate = 1;
+            }
+
+            savePatientsToFile();
             printf("\nPatient updated successfully!\n");
             return;
         }
@@ -308,6 +407,7 @@ void deletePatient() {
             }
             patientCount--;
             availableBeds++;  // Increase available beds
+            savePatientsToFile();
             printf("\nPatient deleted successfully!\n");
             printf("Available beds now: %d/%d\n", availableBeds, TOTAL_BEDS);
             return;
@@ -344,6 +444,10 @@ void displayMenu() {
 // Main function
 int main() {
     int choice;
+
+    if (!loadPatientsFromFile()) {
+        savePatientsToFile();
+    }
 
     while (1) {
         displayMenu();
