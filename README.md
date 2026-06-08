@@ -1,6 +1,5 @@
 # Single Hospital Management System.
 **1.Introduction**
-
 The Hospital Management System is a console-based application developed using the 
 C programming language. It is designed to manage hospital activities such as patient 
 registration, record management, searching, updating, and deleting patient information. 
