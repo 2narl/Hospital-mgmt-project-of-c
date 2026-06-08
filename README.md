@@ -1,2 +1,2 @@
-# Hospital-mgmt-project-of-c
+# Single Hospital Management System.
 Normal  program or basic project on Single Hospital Management System.
