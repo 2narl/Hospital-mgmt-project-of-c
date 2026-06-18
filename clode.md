@@ -302,3 +302,7 @@ For issues or questions about the system, ensure:
 
 **Last Updated**: June 2026  
 **Version**: 1.0
+
+---
+
+⭐ If you found this project useful, consider giving it a star on GitHub.
