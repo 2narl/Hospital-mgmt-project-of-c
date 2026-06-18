@@ -22,14 +22,14 @@ This is a **Hospital Management System** written in C that manages patient recor
 ## System Requirements
 
 ### Software Requirements
-- **Compiler**: GCC or any C compiler
 - **OS**: Linux, Windows (with MinGW), or macOS
-- **RAM**: Minimum 512 MB
-- **Storage**: 1 MB (for patient records)
+- **Compiler**: GCC or any C compiler
+  **Text Editor/IDE**: Visual Studio Code
 
 ### Hardware Requirements
 - Basic computer with standard input/output devices
-
+- **RAM**: Minimum 2 GB(4 GB recommended)
+- **Storage**: 100 MB free space
 ---
 
 ## File Structure
