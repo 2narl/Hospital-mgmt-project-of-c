@@ -48,18 +48,18 @@ hospital_management_system/
 
 ### Step 1: Compile the Program
 ```bash
-gcc -o hospital hospital.c
+gcc -o single_hospital_mgmt single_hospital_mgmt.c
 ```
 
 ### Step 2: Run the Program
 ```bash
-./hospital
+./single_hospital_mgmt
 ```
 
 **For Windows:**
 ```bash
-gcc -o hospital.exe hospital.c
-hospital.exe
+gcc -o single_hospital_mgmt.exe single_hospital_mgmt.c
+single_hospital_mgmt.exe
 ```
 
 ---
