@@ -37,9 +37,9 @@ This is a **Hospital Management System** written in C that manages patient recor
 ```
 hospital_management_system/
 │
-├── hospital.c          (Main source code)
-├── patients.txt        (Data storage file - auto-created)
-└── README.md          (This file)
+├── single_hospital_mgmt.c   (Main source code)
+├── patients.txt             (Data storage file - auto-created)
+└── README.md                (This file)
 ```
 
 ---
